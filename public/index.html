@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Object Detector</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 Object Detector</h1>
+    <p>Paste an image URL below, you can get/make a Image URL using <a href="https://imgbb.com/">ImgBB</a> online.</p>
+
+    <div class="input-group">
+      <input type="text" id="imageUrl" placeholder="Enter image URL here">
+      <button onclick="detect()">Detect</button>
+    </div>
+
+    <div id="preview"></div>
+    <div id="results"></div>
+  </div>
+
+  <footer>Powered by <b>Raqkid505</b></footer>
+
+  <script>
+    async function detect() {
+      const url = document.getElementById("imageUrl").value.trim();
+      const preview = document.getElementById("preview");
+      const results = document.getElementById("results");
+
+      if (!url) {
+        alert("Please enter an image URL.");
+        return;
+      }
+
+      preview.innerHTML = `<img src="${url}" alt="Image">`;
+      results.innerHTML = "Detecting... 🔄";
+
+      try {
+        const response = await fetch(`/api/detect?image=${encodeURIComponent(url)}`);
+        const data = await response.json();
+
+        if (data.status) {
+          results.innerHTML = "✅ Detected: " + (data.labels.join(", ") || "None");
+        } else {
+          results.innerHTML = "❌ Error: " + data.error;
+        }
+      } catch (err) {
+        results.innerHTML = "❌ Error: " + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
